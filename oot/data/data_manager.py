@@ -34,6 +34,7 @@ class FileData:
         self.name = file
         self.texts = []
         self.is_ocr_detected = False
+        self.position_info=[]
 
     def set_texts(self, texts):
         self.texts = []
@@ -45,7 +46,13 @@ class FileData:
     
     def get_text(self, index):
         return self.texts[index]
+    
+    def set_position_info(self, character, position):
+        self.position_info.append((character, position))
 
+    def get_char_positions(self, text_index):
+        return self.char_positions[text_index]
+    
 class TextData:
     def __init__(self, text):
         self.text = text
