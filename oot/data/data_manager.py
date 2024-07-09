@@ -35,7 +35,7 @@ class FileData:
         self.texts = []
         self.is_ocr_detected = False
         self.position_info=[]
-
+        
     def set_texts(self, texts):
         self.texts = []
         for index, t in enumerate(texts):
@@ -46,13 +46,12 @@ class FileData:
     
     def get_text(self, index):
         return self.texts[index]
-    
+
     def set_position_info(self, character, position):
         self.position_info.append((character, position))
 
-    def get_char_positions(self, text_index):
-        return self.char_positions[text_index]
-    
+    def get_position_info(self, text_index):
+        return self.position_info[text_index]
 class TextData:
     def __init__(self, text):
         self.text = text
@@ -75,14 +74,13 @@ class DataManager:
     @classmethod
     def reset_work_folder(cls, target_folder='./image'):
         print ('[DataManager.reset] reset, target=', target_folder)
-        cls.target_folder = os.path.abspath(target_folder)
-
-        cls.__init_output_folder()
+        target_path = os.path.abspath(target_folder)
+        cls.folder_data = FolderData(target_path)
+        cls.__init_output_folder(target_path)
 
     @classmethod
-    def __init_output_folder(cls):
+    def __init_output_folder(cls,target_folder):
         print ('[DataManager] initOutputFiles() called...')
-        target_folder = cls.folder_data.folder
         print ('[DataManager] initOutputFiles() : target_folder = ', target_folder)
 
         output_folder = os.path.join(target_folder + os.sep + '__OUTPUT_FILES__')
@@ -101,6 +99,9 @@ class DataManager:
         target_images = [file_data.name for file_data in cls.folder_data.files]
         for src_file in target_images:
             src_file_name = os.path.basename(src_file)
-            out_file = os.path.join(cls.target_folder, '__OUTPUT_FILES__', src_file_name)
+            out_file = os.path.join(target_folder, '__OUTPUT_FILES__', src_file_name)
             if not os.path.isfile(out_file):
                 shutil.copy(src_file, out_file)
+                
+                
+    
