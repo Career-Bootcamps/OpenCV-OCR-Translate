@@ -24,8 +24,10 @@ def clicked_change_folder():
     dir_path = filedialog.askdirectory(parent=TopFrame.root, title='작업할 폴더를 선택하세요', initialdir=DataManager.folder_data.folder)
     print("##> dir_path : ", dir_path)
     if __check_work_folder(dir_path):
+            # 폴더 변경
             DataManager.reset_work_folder(dir_path)
             
-            # TODO: 원래는 이렇게 하면안됨, FrameManager.work_folder_changed 함수가 UI의 모든것을 한번에 처리해야함
-            TopFrame.change_work_file(dir_path)
+            # UI 업데이트
+            TopFrame.change_work_file(DataManager.folder_data.get_work_file().name)
+
             
