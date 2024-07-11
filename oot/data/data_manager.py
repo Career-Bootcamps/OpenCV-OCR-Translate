@@ -1,7 +1,8 @@
 import glob
 import os
-from typing import cast
 import shutil
+from typing import cast
+from PIL import ImageTk, Image
 
 # FolderData > FileData > TextData
 
@@ -74,36 +75,81 @@ class DataManager:
 
     @classmethod
     def __init_output_folder(cls,target_folder):
-        print ('[DataManager] initOutputFiles() called...')
-        print ('[DataManager] initOutputFiles() : target_folder = ', target_folder)
+        print ('[DataManager] __init_output_folder() called...')
+        print ('[DataManager] __init_output_folder() : target_folder = ', target_folder)
 
-        output_folder = os.path.join(target_folder + os.sep + '__OUTPUT_FILES__')
-        print ('[DataManager] initOutputFiles() : output_folder = ', output_folder)
+        output_folder = os.path.join(target_folder, '__OUTPUT_FILES__')
+        print ('[DataManager] __init_output_folder() : output_folder = ', output_folder)
 
         # create output folder if not exist
         if os.path.isdir(output_folder) == False:
             os.makedirs(output_folder)
-            print ('[DataManager] initOutputFiles() : output_folder newly created!')
+            print ('[DataManager] __init_output_folder() : output_folder newly created!')
         
         if target_folder == None or len(target_folder) == 0:
-            print ('[DataManager] initOutputFiles() : no source files!')
+            print ('[DataManager] __init_output_folder() : no source files!')
             return
         
         # copy files to output folder if source image file doesn't exist in output folder
         target_images = [file_data.name for file_data in cls.folder_data.files]
+        
         for src_file in target_images:
-            src_file_name = os.path.basename(src_file)
-            out_file = os.path.join(target_folder, '__OUTPUT_FILES__', src_file_name)
+            src_file_basename = os.path.basename(src_file)
+            # 파일 이름과 확장자 분리
+            src_file_name, src_file_ext = os.path.splitext(src_file_basename)
+            # 이미지 저장 시 jpg는 PIL에서 지원하지 않는 이미지 포맷이므로 jpeg로 저장
+            if src_file_ext.lower() == '.jpg':
+                out_file = (target_folder + os.sep + '__OUTPUT_FILES__' + os.sep + src_file_name + '.jpeg')
+            else:
+                out_file = (target_folder + os.sep + '__OUTPUT_FILES__' + os.sep + src_file_basename)
             if not os.path.isfile(out_file):
                 shutil.copy(src_file, out_file)
+                if src_file_ext.lower() == '.jpg':
+                    os.rename(out_file, (target_folder + os.sep + '__OUTPUT_FILES__' + os.sep + src_file_name + '.jpeg'))
                 
+    @classmethod
+    def save_output_file(cls, src_file, out_image):
+        print ('[DataManager] save_output_file() called...')
+
+        # out_image는 PIL의 Image 객체
+        if out_image is None:
+            print ('[DataManager] save_output_file() : image is None, it can not be saved!')
+       
+        # out_file은 path
+        out_file = cls.get_output_file()
+        print ('[DataManager] save_output_file() : src_file=', src_file)
+        print ('[DataManager] save_output_file() : out_file=', out_file)
+
+        if out_file is not None:
+            # 확장자에 따라서 저장을 달리함
+            cls.__save_according_ext(out_file, out_image)
+            print('[DataManager] save_output_file(): Image saved successfully!')
+            return True
+        return False
+    
+    @classmethod
+    def __save_according_ext(cls, out_file, out_image):
+        # 경로와 파일 이름 분리
+        out_file_folder, out_file_full_name = os.path.split(out_file)
+        # 파일 이름과 확장자 분리
+        out_file_name, out_file_ext = os.path.splitext(out_file_full_name)
+        # PIL 객체는 RGBA라서 RGB인 jpeg, gif를 저장하면 에러가 발생하므로 convert
+        if out_file_ext != 'png':
+            out_image = out_image.convert('RGB')
+            
+        out_image.save((out_file_folder + os.sep +out_file_name + out_file_ext), format = out_file_ext[1:].upper())
+
     @classmethod
     def get_output_file(cls):
         print ('[DataManager] get_output_file() called...')
 
         out_file_dir = cls.folder_data.folder
-        out_file_name = os.path.basename(cls.folder_data.work_file.name)
-        out_file = os.path.join(out_file_dir, '__OUTPUT_FILES__', out_file_name)
+        out_file_basename = os.path.basename(cls.folder_data.work_file.name)
+        out_file = os.path.join(out_file_dir, '__OUTPUT_FILES__', out_file_basename)
+        out_file_name, out_file_ext = os.path.splitext(out_file_basename)
+
+        if out_file_ext.lower() == '.jpg':
+            out_file = (out_file_dir + os.sep + '__OUTPUT_FILES__' + os.sep + out_file_name + '.jpeg')
         
         return out_file
     

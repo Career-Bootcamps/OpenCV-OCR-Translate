@@ -64,3 +64,12 @@ def clicked_next_image():
         return
     print('[TopFrameControl] clickedNextImage() : next image = ', next_img.name)
     ControlManager.changed_work_image(next_img)   
+
+def clicked_save_output():
+    print('[TopFrameControl] clicked_save_output() called!!...')
+    result = DataManager.save_output_file(DataManager.folder_data.work_file.name, MiddleFrame.out_canvas_worker.get_image())
+    if result == True:
+        MiddleFrame.reset_canvas_images(DataManager.folder_data.get_work_file())
+        mb.showinfo("성공", "저장에 성공했습니다")
+    else:
+        mb.showerror("에러", "저장에 실패했습니다")
