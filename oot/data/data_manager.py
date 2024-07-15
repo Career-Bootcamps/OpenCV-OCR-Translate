@@ -1,11 +1,18 @@
+import sys, io
 import glob
 import os
 import shutil
+import easyocr
+
 from typing import cast
 from typing import cast
 from PIL import ImageTk, Image
 
 # FolderData > FileData > TextData
+
+# 기본 인코딩을 UTF-8로 설정
+sys.stdout = io.TextIOWrapper(sys.stdout.detach(), encoding='utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.detach(), encoding='utf-8')
 
 class FolderData:
     
@@ -63,12 +70,19 @@ class TextData:
     
 class DataManager:
     folder_data = None
+    
+    # no need to reset, reload
+    easyocr_reader = None
+
     def init():
         DataManager.curr_path = os.getcwd()
         default_image_path = DataManager.curr_path + os.sep + "image"
         print(DataManager.curr_path)
         print(default_image_path)
         DataManager.folder_data = FolderData(default_image_path)
+        
+        # this needs to run only once to load the model into memory
+        DataManager.easyocr_reader = easyocr.Reader(['ch_sim','en'])
 
         DataManager.reset_work_folder()
         
@@ -165,3 +179,26 @@ class DataManager:
                     break
         print ('[DataManager] getNextImageFile() - image not found!!')
         return None
+
+    @classmethod
+    def get_image_index(cls, img_file):
+        print ('[DataManager] get_image_index() called!!...')
+        for i in range(len(cls.folder_data.files)):
+            if cls.folder_data.files[i] == img_file:
+                return i
+        return -1
+    
+    @classmethod
+    def read_text_image(cls, img_file):
+        print ('[DataManager] read_text_image() called!!...')
+        texts_info = cls.easyocr_reader.readtext(img_file)
+
+        # easyocr을 통해 읽은 text를 저장
+        read_texts = [t[1] for t in texts_info]
+
+        if texts_info == None or len(read_texts) == 0:
+            return None
+        
+        else: 
+            return read_texts
+   
