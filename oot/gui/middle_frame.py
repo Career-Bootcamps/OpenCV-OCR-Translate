@@ -2,8 +2,8 @@ import os
 import tkinter as tk
 from tkinter import ttk
 from PIL import ImageTk, Image
-
-from oot.data.data_manager import DataManager
+import sys
+sys.path.append('.')
 from oot.gui.low_frame import LowFrame
 
 class CanvasWorker:
@@ -69,6 +69,7 @@ class MiddleFrame:
         right_canvas = tk.Canvas(mid_frm, bg='lightgray')
         right_canvas.grid(row=0, column=1, sticky=tk.E+tk.W+tk.N+tk.S)
 
+        from oot.data.data_manager import DataManager
         src_file = DataManager.folder_data.work_file.name
         out_file = DataManager.get_output_file()
 
@@ -103,6 +104,7 @@ class MiddleFrame:
     def reset_canvas_images(cls, work_file):
         print ('[MiddleFrame] resetCanvasImages() called...')
         src_file = work_file.name
+        from oot.data.data_manager import DataManager
         out_file = DataManager.get_output_file()
 
         cls.src_canvas_worker.change_image_file(src_file)

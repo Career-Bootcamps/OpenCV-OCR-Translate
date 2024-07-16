@@ -6,7 +6,6 @@ from tkinter import messagebox as mb
 import sys
 sys.path.append('.')
 from oot.data.data_manager import DataManager
-from oot.control.control_manager import ControlManager
 from oot.gui.top_frame import TopFrame
 from oot.gui.middle_frame import MiddleFrame
 
@@ -48,7 +47,7 @@ def clicked_prev_image():
         mb.showerror("에러", "이전 이미지 파일이 없습니다")
         return
     print('[TopFrameControl] clickedPrevImage() : prev image = ', prev_img.name)
-    ControlManager.changed_work_image(prev_img)   
+    DataManager.changed_work_image(prev_img)   
     
 def clicked_next_image():
     print('[TopFrameControl] clickedNextImage() called!!...')
@@ -63,4 +62,13 @@ def clicked_next_image():
         mb.showerror("에러", "다음 이미지 파일이 없습니다")
         return
     print('[TopFrameControl] clickedNextImage() : next image = ', next_img.name)
-    ControlManager.changed_work_image(next_img)   
+    DataManager.changed_work_image(next_img)   
+
+def clicked_save_output():
+    print('[TopFrameControl] clicked_save_output() called!!...')
+    result = DataManager.save_output_file(DataManager.folder_data.work_file.name, MiddleFrame.out_canvas_worker.get_image())
+    if result == True:
+        MiddleFrame.reset_canvas_images(DataManager.folder_data.get_work_file())
+        mb.showinfo("성공", "저장에 성공했습니다")
+    else:
+        mb.showerror("에러", "저장에 실패했습니다")

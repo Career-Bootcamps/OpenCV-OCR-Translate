@@ -1,9 +1,5 @@
 #from msilib.schema import Control
-import tkinter as tk
-from tkinter import ttk, IntVar
-from tkinter import Tk, font
-from tkinter import colorchooser
-from enum import Enum, auto
+from tkinter import ttk
 
 import googletrans
 from googletrans import Translator
@@ -18,10 +14,12 @@ from oot.gui.subframes.edit_frame import EditFrame
 # import sys
 # sys.path.append('.')
 
-def choose_color():
-    # variable to store hexadecimal code of color
-    color_code = colorchooser.askcolor(title ="Choose color") 
-    LowFrame.reset_color_of_button_in_write_tab(color=color_code[1])
+from oot.gui.subframes.remove_frame import RemoveFrame
+from oot.gui.subframes.write_frame import WriteFrame
+from oot.gui.subframes.mosaic_frame import MosaicFrame
+
+
+
 #------------------------------------------------------------------------------
 # Low frame : low side tabbed pane (tools)
 #------------------------------------------------------------------------------
@@ -54,8 +52,14 @@ class LowFrame:
         low_frm.add(edit_tab, text='이미지편집')
         low_frm.add(mosaic_tab, text='모자이크')
         
+        # init remove tab
+        remove_tab_content = RemoveFrame(remove_tab)
+        
         # init write tab
-        self.__init_write_tab(write_tab)
+        self.write_frame = WriteFrame(write_tab)
+        
+        # init mosaic tab
+        MosaicFrame(mosaic_tab)
 
         # init edit tab
         EditFrame(edit_tab)
@@ -231,18 +235,5 @@ class scrollable_list(tk.Frame):
             self.list_values = [None] * len(text_list)
             for i in range(len(text_list)):
                 self.list_values[i] = tk.BooleanVar()
+          self.write_frame.write_tab_changed()
             
-            for t in text_list:
-                if self.list_type == scrollable_list_type.CHECK_BUTTON:
-                    # Reference : checkbutton example getting value in callback
-                    # - https://arstechnica.com/civis/viewtopic.php?t=69728
-                    from oot.control.low_write_control import selectedCheckListInRemoveTab
-                    cb = tk.Checkbutton(self, text=t, command=lambda i=self.__get_indexed_text(idx,t): selectedCheckListInRemoveTab(i), var=self.list_values[idx])
-                elif self.list_type == scrollable_list_type.RADIO_BUTTON:
-                    from oot.control.low_write_control import selectedRadioListInRemoveTab
-                    cb = tk.Radiobutton(self, text=t, command=lambda i=self.__get_indexed_text(idx,t): selectedRadioListInRemoveTab(i), variable=self.radio_value, value=idx)
-                else:
-                    cb = tk.Checkbutton(self, text=t)
-                self.text.window_create("end", window=cb)
-                self.text.insert("end", "\n") # to force one checkbox per line
-                idx = idx + 1
