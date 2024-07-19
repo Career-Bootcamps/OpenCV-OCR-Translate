@@ -45,4 +45,9 @@ class TopFrame:
         if cls.label_curr_file_name:
             cls.label_curr_file_name.config(text=work_file.get_file_name())
 
-    
+    @classmethod
+    def reset_work_file(cls):
+        from oot.data.data_manager import DataManager
+        new_work_file = DataManager.get_work_file()
+        cls.change_work_file(new_work_file)
+        print(f"{cls.__name__}: 작업 파일이 재설정되었습니다.")
