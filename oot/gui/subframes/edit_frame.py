@@ -63,3 +63,7 @@ class EditFrame:
 
     def contrast_changed(self, event):
         self.contrast_value_label.config(text=self.get_current_value(self.current_contrast))
+
+    def update_image(self):
+        brightness = (self.current_brightness.get() + 50) / 50  # Normalize brightness to 0.0 - 2.0 scale
+        contrast = (self.current_contrast.get() + 50) / 50  # Normalize contrast to 0.0 - 2.0 scale
