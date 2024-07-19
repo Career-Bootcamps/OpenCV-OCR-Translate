@@ -49,10 +49,10 @@ class ScrollableList(tk.Frame):
                 if self.list_type == ScrollableListType.CHECK_BUTTON:
                     # Reference : checkbutton example getting value in callback
                     # - https://arstechnica.com/civis/viewtopic.php?t=69728
-                    from oot.control.low_write_control import selectedCheckListInRemoveTab
-                    cb = tk.Checkbutton(self, text=t, command=lambda i=self.__get_indexed_text(idx,t): selectedCheckListInRemoveTab(i), var=self.list_values[idx])
+                    from oot.control.low_remove_control import selected_check_list_in_remove_tab
+                    cb = tk.Checkbutton(self, text=t, command=lambda i=self.__get_indexed_text(idx,t): selected_check_list_in_remove_tab(i), var=self.list_values[idx])
                 elif self.list_type == ScrollableListType.RADIO_BUTTON:
-                    from oot.control.low_write_control import selectedRadioListInRemoveTab
+                    from oot.control.low_remove_control import selectedRadioListInRemoveTab
                     cb = tk.Radiobutton(self, text=t, command=lambda i=self.__get_indexed_text(idx,t): selectedRadioListInRemoveTab(i), variable=self.radio_value, value=idx)
                 else:
                     cb = tk.Checkbutton(self, text=t)

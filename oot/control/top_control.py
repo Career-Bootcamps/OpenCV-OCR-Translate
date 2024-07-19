@@ -9,6 +9,7 @@ sys.path.append('.')
 from oot.data.data_manager import DataManager
 from oot.gui.top_frame import TopFrame
 from oot.gui.middle_frame import MiddleFrame
+from oot.gui.subframes.remove_frame import RemoveFrame
 from oot.gui.subframes.write_frame import WriteFrame
 
 def __check_work_folder(work_dir):
@@ -31,6 +32,7 @@ def clicked_change_folder():
             DataManager.reset_work_folder(dir_path)
             
             # 이전 문자 인식결과 초기화
+            RemoveFrame.reset_remove_tab_data()
             WriteFrame.reset_write_tab_data()
             
             # UI 업데이트

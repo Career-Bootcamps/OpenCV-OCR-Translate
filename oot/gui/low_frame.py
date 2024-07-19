@@ -48,7 +48,7 @@ class LowFrame:
         low_frm.add(mosaic_tab, text='모자이크')
         
         # init remove tab
-        remove_tab_content = RemoveFrame(remove_tab)
+        self.remove_frame = RemoveFrame(remove_tab)
         
         # init write tab
         self.write_frame = WriteFrame(write_tab, root)
@@ -61,10 +61,6 @@ class LowFrame:
 
     @classmethod
     def get_status_of_check_list_in_remove_tab(cls, idx):
-        pass
-
-    @classmethod
-    def reset_remove_tab_data(cls, texts=None):
         pass
 
     @classmethod
