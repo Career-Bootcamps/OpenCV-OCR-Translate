@@ -3,7 +3,8 @@ from tkinter import ttk
 
 from PIL import ImageTk, Image
 from tkinter import END, scrolledtext
-
+import sys
+sys.path.append('.')
 from oot.gui.subframes.remove_frame import RemoveFrame
 from oot.gui.subframes.write_frame import WriteFrame
 from oot.gui.subframes.mosaic_frame import MosaicFrame
@@ -57,6 +58,11 @@ class LowFrame:
 
     
     def __tab_changed(self, event):
+        print ('[LowFrame] __tabChanged() called...')
+        from oot.data.data_manager import DataManager
+        from oot.gui.middle_frame import MiddleFrame
+        MiddleFrame.reset_canvas_images(DataManager.get_work_file())
+        
         tab_idx = LowFrame.notebook.index(LowFrame.notebook.select())
         print(f'tab_idx={tab_idx}')
         

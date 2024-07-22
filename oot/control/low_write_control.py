@@ -1,6 +1,8 @@
 from tkinter import colorchooser
 import sys
 sys.path.append('.')
+from oot.data.data_manager import DataManager
+from oot.gui.middle_frame import MiddleFrame
 from oot.gui.subframes.common import ScrollableListListener
 from oot.gui.subframes.write_frame import WriteFrame
 
@@ -24,7 +26,7 @@ class WriteTextListHandler(ScrollableListListener):
         # write text to original text area of write tab in low frame
         WriteFrame.reset_translation_target_text_in_write_tab(selected_item_text)
 
-        # MiddleFrame.reset_canvas_images(DataManager.get_work_file().get_file_name())
+        MiddleFrame.reset_canvas_images(DataManager.get_work_file())
 
 def choose_color():
     # variable to store hexadecimal code of color
