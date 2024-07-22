@@ -1,10 +1,6 @@
 #from msilib.schema import Control
 from tkinter import ttk
 
-import googletrans
-from googletrans import Translator
-from httpcore import SyncHTTPProxy
-
 from PIL import ImageTk, Image
 from tkinter import END, scrolledtext
 

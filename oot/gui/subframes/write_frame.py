@@ -124,7 +124,7 @@ class WriteFrame:
         write_tab_text_org = tk.Text(write_tab_trans_frm, height=3)
         write_tab_text_org.grid(column=0, row=1, sticky=tk.W+tk.E+tk.N+tk.S)
 
-        write_tab_label_google = ttk.Label(write_tab_trans_frm, text='구글 번역 결과 :')
+        write_tab_label_google = ttk.Label(write_tab_trans_frm, text='적용할 텍스트 :')
         write_tab_label_google.grid(column=0, row=2, sticky=tk.W)
         write_tab_text_google = tk.Text(write_tab_trans_frm, height=3)
         write_tab_text_google.grid(column=0, row=3, sticky=tk.W+tk.E+tk.N+tk.S)
@@ -165,21 +165,44 @@ class WriteFrame:
         # clear test list found in the image
         cls.write_tab_text_list.reset(texts)
 
+        # get the current work file from DataManager
+        from oot.data.data_manager import DataManager
+        current_work_file = DataManager.get_work_file()
+
         # clear 'translation tool' area
+        cls.write_tab_text_org.config(state='normal')
         cls.write_tab_text_org.delete('1.0', END)
+        cls.write_tab_text_google.config(state='normal')
         cls.write_tab_text_google.delete('1.0', END)
         cls.write_tab_text_final.delete('1.0', END)
+
+        # load first text and its translation if it exists
+        texts = current_work_file.get_texts()
+        if texts:
+            first_text_data = texts[0]
+            original_text = first_text_data.get_text()
+            translated_text = first_text_data.get_tr_text()
+            cls.write_tab_text_org.insert('end', original_text + '\n')
+            if translated_text:
+                cls.write_tab_text_google.insert('end', translated_text + '\n')
+                cls.write_tab_text_final.insert('end', translated_text + '\n')
+
+        cls.write_tab_text_org.config(state='disabled')
+        cls.write_tab_text_google.config(state='disabled')
         
     @classmethod
     def reset_translation_target_text_in_write_tab(cls, text=None):
         # clear 'translation tool' area
+        cls.write_tab_text_org.config(state='normal')
         cls.write_tab_text_org.delete('1.0', END)
+        cls.write_tab_text_google.config(state='normal')
         cls.write_tab_text_google.delete('1.0', END)
         cls.write_tab_text_final.delete('1.0', END)
 
         # set text to original text area
         cls.write_tab_text_org.insert("end", text)
-        
+        cls.write_tab_text_org.config(state='disabled')
+
         # translate it
         if ENABLE_PROXY:
             proxies_def = {'https': SyncHTTPProxy((b'http', b'www-proxy.us.oracle.com', 80, b''))}
@@ -187,9 +210,21 @@ class WriteFrame:
         else:
             translator = Translator()
         result = translator.translate(text, dest='ko')
-        
+
+        # get the current work file from DataManager
+        from oot.data.data_manager import DataManager
+        current_work_file = DataManager.get_work_file()
+
+        # store the translations in the current work file's TextData objects
+        texts = current_work_file.get_texts()
+        for text_data in texts:
+            if text_data.get_text() == text:
+                text_data.set_tr_text_with_position(result.text, text_data.get_position_info())
+
         # set result text to 
         cls.write_tab_text_google.insert("end", result.text)
+        cls.write_tab_text_google.config(state='disabled')
+        cls.write_tab_text_final.insert("end", result.text)
         
         # TODO: clear 'style tool' area
     
