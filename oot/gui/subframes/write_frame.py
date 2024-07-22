@@ -124,12 +124,12 @@ class WriteFrame:
         write_tab_text_org = tk.Text(write_tab_trans_frm, height=3)
         write_tab_text_org.grid(column=0, row=1, sticky=tk.W+tk.E+tk.N+tk.S)
 
-        write_tab_label_google = ttk.Label(write_tab_trans_frm, text='적용할 텍스트 :')
+        write_tab_label_google = ttk.Label(write_tab_trans_frm, text='구글 번역 결과 :')
         write_tab_label_google.grid(column=0, row=2, sticky=tk.W)
         write_tab_text_google = tk.Text(write_tab_trans_frm, height=3)
         write_tab_text_google.grid(column=0, row=3, sticky=tk.W+tk.E+tk.N+tk.S)
 
-        write_tab_label_final = ttk.Label(write_tab_trans_frm, text='추천 상업용 문구 :')
+        write_tab_label_final = ttk.Label(write_tab_trans_frm, text='적용할 텍스트 :')
         write_tab_label_final.grid(column=0, row=4, sticky=tk.W)
         write_tab_text_final = tk.Text(write_tab_trans_frm, height=3)
         write_tab_text_final.grid(column=0, row=5, sticky=tk.W+tk.E+tk.N+tk.S)
