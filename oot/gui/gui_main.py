@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 import os
-
+import sys
+sys.path.append('.')
 from oot.data.data_manager import DataManager
 from oot.gui.top_frame import TopFrame
 from oot.gui.middle_frame import MiddleFrame
@@ -37,10 +38,15 @@ class GuiManager:
         # clear all data in 'remove tab' of 'RemoveFrame'
         from oot.gui.subframes.remove_frame import RemoveFrame
         RemoveFrame.reset_remove_tab_data()
-
+        
+        # set texts to remove tab in 'WriteFrame'
+        if work_file.is_ocr_executed():
+            texts = work_file.get_texts_as_string()
+        else:
+            texts=None
         # clear all data in 'write tab' of 'WriteFrame'
         from oot.gui.subframes.write_frame import WriteFrame
-        WriteFrame.reset_write_tab_data()
+        WriteFrame.reset_write_tab_data(texts)
         
         from oot.gui.middle_frame import MiddleFrame
         # Change images in canvases of 'MiddleFrame' with the 1st image of new dir

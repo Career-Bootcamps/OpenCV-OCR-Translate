@@ -37,10 +37,14 @@ def clicked_read_text():
         print('[low_write_control] clicked_search_text() called!!...')
         from oot.data.data_manager import DataManager
         texts = DataManager.get_texts_from_image()
-        print(f'[low_write_control] clicked_search_text() result : {texts}')
+
         if texts is None:
             return
 
-        # Clear existing radio buttons
+        # 기존 라디오 버튼들 초기화
         write_tab_text_list = WriteFrame.write_tab_text_list
         write_tab_text_list.reset(texts)
+
+        # 첫 번째 텍스트 항목을 번역 영역에 설정
+        if texts and len(texts) > 0:
+            WriteFrame.reset_translation_target_text_in_write_tab(texts[0])
