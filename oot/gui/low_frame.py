@@ -65,5 +65,5 @@ class LowFrame:
         print(f'tab_idx={tab_idx}')
         
         if tab_idx == 1:
-          self.write_frame.write_tab_changed()
+            self.write_frame.write_tab_changed()
             

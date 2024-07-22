@@ -192,6 +192,7 @@ class WriteFrame:
         cls.write_tab_text_google.insert("end", result.text)
         
         # TODO: clear 'style tool' area
-        
+    
+    @classmethod    
     def reset_color_of_button_in_write_tab(color='#FFFF00'):
         WriteFrame.button_color.configure(bg=color)

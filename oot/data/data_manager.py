@@ -244,7 +244,7 @@ class DataManager:
         print ('[DataManager] get_image_index() called!!...')
         img_file = cls.folder_data.get_work_file()
         target_file = cls.folder_data.get_files()
-       
+        
         for i in range(len(target_file)):
             if target_file[i] == img_file:
                 return i
@@ -271,8 +271,10 @@ class DataManager:
         ocr_executed_texts_list = []
 
         if work_file.is_ocr_executed():
-            print('[DataManager] get_texts_from_image() called!!... 이미 읽은 데이터입니다.')
+            #print('[DataManager] get_texts_from_image() called!!... 이미 읽은 데이터입니다.')
+            mb.showwarning("Warning", "이미 text를 읽었습니다")
             ocr_executed_texts_list = work_file.get_texts_as_string()
+    
             return ocr_executed_texts_list
         
         # easyocr을 통해 읽은 text를 저장
