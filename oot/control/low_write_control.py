@@ -43,10 +43,12 @@ def clicked_read_text():
         if texts is None:
             return
 
-        # Clear existing radio buttons
-        write_tab_text_list = WriteFrame.write_tab_text_list
-        write_tab_text_list.reset(texts)
-        
-        # 번역도 함께 진행되도록 첫 번째 항목을 번역 영역에 설정
-        if texts and len(texts) > 0:
-            WriteFrame.reset_translation_target_text_in_write_tab(texts[0])
+        WriteFrame.reset_write_tab_data(texts)
+
+        # 첫 번째 라디오 버튼을 선택하고 상자 그리기
+        WriteFrame.write_tab_text_list.radio_value.set(0)
+        WriteFrame.reset_translation_target_text_in_write_tab(texts[0])
+
+        # 이미지에 상자 그리기
+        from oot.gui.middle_frame import MiddleFrame
+        MiddleFrame.redraw_canvas_images()
