@@ -70,7 +70,7 @@ class CanvasWorker:
                         int(self.scale_ratio*start_pos[1]),  # start y
                         int(self.scale_ratio*end_pos[0]),    # end x
                         int(self.scale_ratio*end_pos[1]),    # end y
-                        outline='#0000ff'
+                        outline='#FF00FF'
                     )
                 except IndexError:
                     print(f"IndexError: Text index {idx} out of range.")
