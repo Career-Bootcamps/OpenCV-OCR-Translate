@@ -63,15 +63,17 @@ class CanvasWorker:
                 idx = WriteFrame.write_tab_text_list.radio_value.get()
                 image_index = DataManager.get_image_index()
                 work_file = DataManager.folder_data.get_file_by_index(image_index) # FileData
-                start_pos, end_pos = work_file.get_rectangle_position_by_texts_index(idx)
-                self.canvas.create_rectangle(
-                    int(self.scale_ratio*start_pos[0]),  # start x 
-                    int(self.scale_ratio*start_pos[1]),  # start y
-                    int(self.scale_ratio*end_pos[0]),    # end x
-                    int(self.scale_ratio*end_pos[1]),    # end y
-                    #outline='blue'
-                    outline='#0000ff'
-                )
+                try:
+                    start_pos, end_pos = work_file.get_rectangle_position_by_texts_index(idx)
+                    self.canvas.create_rectangle(
+                        int(self.scale_ratio*start_pos[0]),  # start x 
+                        int(self.scale_ratio*start_pos[1]),  # start y
+                        int(self.scale_ratio*end_pos[0]),    # end x
+                        int(self.scale_ratio*end_pos[1]),    # end y
+                        outline='#0000ff'
+                    )
+                except IndexError:
+                    print(f"IndexError: Text index {idx} out of range.")
             
     def change_image_file(self, img_file):
         self.img_file = img_file
