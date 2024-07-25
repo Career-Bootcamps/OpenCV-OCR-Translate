@@ -28,6 +28,10 @@ class RemoveFrame:
         remove_tab_down_frm = ttk.Frame(root)
         RemoveFrame.__set_remove_tab_text_list(remove_tab_down_frm)
 
+        from oot.gui.middle_frame import MiddleFrame
+        from oot.control.low_write_control import WritePostDrawListner
+        MiddleFrame.src_canvas_worker.set_post_draw_listener(WritePostDrawListner())
+
     @classmethod
     def __set_remove_tab_text_list(cls, remove_tab_down_frm):
         remove_tab_down_frm.pack(padx=2, pady=2, fill='both', expand=True)

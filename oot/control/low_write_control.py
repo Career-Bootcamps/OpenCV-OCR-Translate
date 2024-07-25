@@ -3,9 +3,12 @@ import sys
 sys.path.append('.')
 from oot.data.data_manager import DataManager
 from oot.gui.middle_frame import MiddleFrame
-from oot.gui.subframes.common import ScrollableListListener
+from oot.gui.subframes.common import ScrollableListListener, CanvasWorkerPostDrawListner
 from oot.gui.subframes.write_frame import WriteFrame
 
+class WritePostDrawListner(CanvasWorkerPostDrawListner):
+    def do_post_draw(self, canvas, scale_ratio):
+        print('############> WRITE : do_post_draw() called...')
 
 
 class WriteTextListHandler(ScrollableListListener):
