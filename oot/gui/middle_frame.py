@@ -5,6 +5,7 @@ from PIL import ImageTk, Image
 import sys
 sys.path.append('.')
 from oot.gui.low_frame import LowFrame
+from oot.data.data_manager import DataManager
 
 class CanvasWorker:
     def __init__(self, img_file, canvas):
@@ -131,6 +132,12 @@ class MiddleFrame:
         MiddleFrame.src_canvas_worker = CanvasWorker(src_file, left_canvas)
         MiddleFrame.out_canvas_worker = CanvasWorker(out_file, right_canvas)
 
+    @classmethod
+    def temp_out_canvas_images(cls, temp_file):
+        # temp_file을 임시적으로 out_file로 지정하여 출력하는 메소드(저장은 별개)
+        print ('[MiddleFrame] temp_out_canvas_images() called...')
+        cls.out_canvas_worker.change_image_file(temp_file)
+        cls.redraw_canvas_images()
 
     @classmethod
     def redraw_canvas_images(cls):
