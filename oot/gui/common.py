@@ -2,14 +2,13 @@ from enum import Enum, auto
 import tkinter as tk
 from PIL import ImageTk, Image
 from tkinter import END, IntVar, ttk
-
 from abc import *
 
-from abc import *
 class CanvasWorkerPostDrawListner(metaclass=ABCMeta):
     @abstractmethod
-    def do_post_draw(canvas, scale_ratio):
+    def do_post_draw(self, canvas, scale_ratio):
         pass
+    
 class CanvasWorker:
 
     def set_post_draw_listener(self, listener: CanvasWorkerPostDrawListner):

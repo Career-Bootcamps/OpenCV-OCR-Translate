@@ -38,7 +38,7 @@ class MiddleFrame:
         mid_frm.columnconfigure((0,1), weight=1)
         mid_frm.rowconfigure(0, weight=1)
 
-        from oot.gui.subframes.common import CanvasWorker
+        from oot.gui.common import CanvasWorker
         MiddleFrame.src_canvas_worker = CanvasWorker(src_file, left_canvas)
         MiddleFrame.out_canvas_worker = CanvasWorker(out_file, right_canvas)
 

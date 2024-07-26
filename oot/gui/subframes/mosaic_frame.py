@@ -1,6 +1,6 @@
 from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
-from oot.gui.subframes.common import ScrollableList, ScrollableListType
+from oot.gui.common import ScrollableList, ScrollableListType
 
 class MosaicFrame:
     root = None

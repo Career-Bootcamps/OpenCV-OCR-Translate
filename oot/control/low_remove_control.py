@@ -1,6 +1,6 @@
 from abc import *
 from oot.data.data_manager import DataManager
-from oot.gui.subframes.common import ScrollableListListener
+from oot.gui.common import ScrollableListListener
 
 
 class RemoveTextListHandler(ScrollableListListener):
