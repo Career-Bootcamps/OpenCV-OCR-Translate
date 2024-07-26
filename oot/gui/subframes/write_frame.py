@@ -20,6 +20,11 @@ class WriteFrame:
 
         # low frame write tab - [CENTER] translation tool
         self.__init_write_tab_translation_tool(low_frm_write_tab)
+        
+        from oot.control.low_write_control import WritePostDrawHandler
+        from oot.gui.middle_frame import MiddleFrame
+        MiddleFrame.src_canvas_worker.set_post_draw_listener(WritePostDrawHandler())
+        MiddleFrame.out_canvas_worker.set_post_draw_listener(WritePostDrawHandler())
 
     # low frame write tab - [LEFT] texts tool
     def __init_write_tab_texts_tool(self, low_frm_write_tab):
@@ -34,7 +39,7 @@ class WriteFrame:
         read_text_button.pack(padx=2, pady=2, anchor='nw')
     
         # Packing the text list below the button
-        from oot.gui.subframes.common import ScrollableList, ScrollableListType
+        from oot.gui.common import ScrollableList, ScrollableListType
         from oot.control.low_write_control import WriteTextListHandler
         write_tab_text_list = ScrollableList(left_frame, ScrollableListType.RADIO_BUTTON, WriteTextListHandler())
         write_tab_text_list.text.config(width=20)
