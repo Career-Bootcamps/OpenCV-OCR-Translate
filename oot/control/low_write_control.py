@@ -1,4 +1,5 @@
 from tkinter import colorchooser
+from PIL import Image
 import sys
 sys.path.append('.')
 from oot.data.data_manager import DataManager
@@ -33,6 +34,9 @@ class WritePostDrawHandler(CanvasWorkerPostDrawListner):
 
 
 class WriteTextListHandler(ScrollableListListener):
+    def __init__(self, write_frame_instance):
+        self.write_frame_instance = write_frame_instance
+        
     def selected_check_list(self, text):
         pass
         
@@ -41,15 +45,44 @@ class WriteTextListHandler(ScrollableListListener):
         text_info = text.split('|', 1)
 
         # get selected item's info (id, text, status)
-        from oot.gui.subframes.write_frame import WriteFrame
         selected_item_id = int(text_info[0])
         selected_item_text = text_info[1]
         print ('[WriteTextListHandler] selected_radio_list() : id = ', selected_item_id)
         print ('[WriteTextListHandler] selected_radio_list() : text = ', selected_item_text)
         
         # write text to original text area of write tab in low frame
-        WriteFrame.reset_translation_target_text_in_write_tab(selected_item_text)
+        self.write_frame_instance.reset_translation_target_text_in_write_tab(selected_item_text)
 
+        # Preview the font size and color based on the text's position
+        try:
+            from oot.data.data_manager import DataManager
+            work_file = DataManager.get_work_file()
+            start_pos, end_pos = work_file.get_rectangle_position_by_texts_index(selected_item_id)
+            box_height = end_pos[1] - start_pos[1]
+            
+            # Use the instance of WriteFrame to access combo_box2
+            estimated_font_size=box_height
+            self.write_frame_instance.combo_box2.set(estimated_font_size)  # Set estimated font size
+            
+            # Get the image and background color
+            out_file_path = DataManager.get_output_file()
+            image = Image.open(out_file_path)
+            
+            # Get pixel color at the center of the box
+            mid_x = (start_pos[0] + end_pos[0]) // 2
+            mid_y = (start_pos[1] + end_pos[1]) // 2
+            background_color = image.getpixel((mid_x, mid_y))
+            
+            # Calculate complementary font color
+            font_color_rgb = self.write_frame_instance.get_complementary_color(background_color)
+            font_color_hex = f"#{font_color_rgb[0]:02x}{font_color_rgb[1]:02x}{font_color_rgb[2]:02x}"
+            
+            # Set the preview color in the UI
+            self.write_frame_instance.button_color.configure(bg=font_color_hex)
+
+        except Exception as e:
+            print(f"Error in previewing font size and color: {e}")
+        
         MiddleFrame.reset_canvas_images(DataManager.get_work_file())
 
 def choose_color():
@@ -69,9 +102,13 @@ def clicked_read_text():
 
         WriteFrame.reset_write_tab_data(texts)
 
-        # 첫 번째 라디오 버튼을 선택하고 상자 그리기
+        # 첫 번째 라디오 버튼을 선택
         WriteFrame.write_tab_text_list.radio_value.set(0)
         WriteFrame.reset_translation_target_text_in_write_tab(texts[0])
+        
+        # 첫 번째 텍스트로 selected_radio_list 호출
+        WriteFrame.write_tab_text_list.listener.selected_radio_list(f"0|{texts[0]}")
+
 
         # 이미지에 상자 그리기
         from oot.gui.middle_frame import MiddleFrame

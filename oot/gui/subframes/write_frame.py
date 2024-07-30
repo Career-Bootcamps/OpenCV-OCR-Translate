@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 from tkinter import ttk, font
 from tkinter import END
@@ -5,6 +6,8 @@ from tkinter import messagebox
 import googletrans
 from googletrans import Translator
 from httpcore import SyncHTTPProxy
+from PIL import Image, ImageDraw, ImageFont
+
     
 ENABLE_PROXY = False
 
@@ -41,7 +44,9 @@ class WriteFrame:
         # Packing the text list below the button
         from oot.gui.common import ScrollableList, ScrollableListType
         from oot.control.low_write_control import WriteTextListHandler
-        write_tab_text_list = ScrollableList(left_frame, ScrollableListType.RADIO_BUTTON, WriteTextListHandler())
+        # WriteFrame 인스턴스가 이미 생성되어 있다고 가정
+        write_frame_instance = self
+        write_tab_text_list = ScrollableList(left_frame, ScrollableListType.RADIO_BUTTON, WriteTextListHandler(write_frame_instance))
         write_tab_text_list.text.config(width=20)
         write_tab_text_list.pack(padx=2, pady=2, fill="both", expand=True)
         write_tab_text_list.reset()
@@ -65,23 +70,23 @@ class WriteFrame:
         write_tab_right_label_font_style = ttk.Label(b, text='폰트 스타일 :')
         write_tab_right_label_font_style.grid(column=0, row=0, columnspan=2, sticky=tk.W)
 
-        combo_box = ttk.Combobox(b)
-        combo_box.grid(column=0, row=1, columnspan=4, sticky=tk.W + tk.E)
+        self.combo_box = ttk.Combobox(b)
+        self.combo_box.grid(column=0, row=1, columnspan=4, sticky=tk.W + tk.E)
 
         write_tab_right_label_font_size = ttk.Label(b, text='폰트 사이즈 :')
         write_tab_right_label_font_size.grid(column=0, row=2, columnspan=2, sticky=tk.W)
 
         # 기본값 설정
-        default_font_size = 5
+        default_font_size = 10
         
         # 입력 검증 함수
         def validate_font_size(input_str):
             if input_str.isdigit():
                 value = int(input_str)
-                if 1 <= value <= 60:
+                if 1 <= value <= 90:
                     return True
-            messagebox.showwarning("경고", "1~60까지 숫자만 입력해주세요")
-            combo_box2.set(default_font_size)  # 경고 후 기본값으로 되돌림
+            messagebox.showwarning("경고", "1~90까지 숫자만 입력해주세요")
+            self.combo_box2.set(default_font_size)  # 경고 후 기본값으로 되돌림
 
             return False
 
@@ -89,32 +94,41 @@ class WriteFrame:
         # 입력 검증을 위한 Tkinter 변수와 함수 설정
         validate_cmd = self.root.register(validate_font_size)
         
-        # Spinbox 추가 - 값의 범위를 1에서 60으로 설정, 입력 검증 추가
-        combo_box2 = ttk.Spinbox(b, from_=1, to=60, validate='focusout', validatecommand=(validate_cmd, '%P'))
-        combo_box2.set(default_font_size)  # 기본값 설정
-        combo_box2.grid(column=0, row=3, columnspan=2, sticky=tk.W + tk.E)
+        # Spinbox 추가 - 값의 범위를 1에서 90으로 설정, 입력 검증 추가
+        self.combo_box2 = ttk.Spinbox(b, from_=1, to=90, validate='focusout', validatecommand=(validate_cmd, '%P'))
+        self.combo_box2.set(default_font_size)  # 기본값 설정
+        self.combo_box2.grid(column=0, row=3, columnspan=2, sticky=tk.W + tk.E)
 
         write_tab_right_label_font_color = ttk.Label(b, text='폰트 색상 :')
         write_tab_right_label_font_color.grid(column=0, row=4, columnspan=2, sticky=tk.W)
 
         from oot.control.low_write_control import choose_color
-        button_color = tk.Button(b, text='...', bg='yellow', command=choose_color)
+        button_color = tk.Button(b, text='...', bg='#FFFF00', command=choose_color)
         button_color.grid(column=0, row=5, columnspan=1, sticky=tk.W + tk.E)
         WriteFrame.button_color = button_color
 
-        write_tab_right_btn_apply = ttk.Button(c, text='적용')
+        write_tab_right_btn_apply = ttk.Button(c, text='적용', command=self.apply_text_to_image)
         write_tab_right_btn_apply.pack(side='left')
-        write_tab_right_btn_cancel = ttk.Button(c, text='취소')
+        write_tab_right_btn_cancel = ttk.Button(c, text='복귀')
         write_tab_right_btn_cancel.pack(side='left')
 
         # init font list
-        font_list = font.families()
-        combo_box['values'] = font_list
+        #font_list = font.families()
+        # 폴더 내의 모든 폰트 가져오기
+        fonts_folder = "./fonts"
+        all_fonts = []
+
+        if os.path.isdir(fonts_folder):
+            all_fonts = [os.path.join(fonts_folder, f) for f in os.listdir(fonts_folder) if f.endswith('.ttf')]
+
+        # 폰트 파일 이름에서 확장자를 제거하고 리스트에 추가
+        font_list = [os.path.basename(font).split('.')[0] for font in all_fonts]
+        self.combo_box['values'] = font_list
         try:
-            default_font_index = font_list.index('맑은 고딕')
+            default_font_index = font_list.index('tvN 즐거운이야기 Medium')
         except ValueError as e:
             default_font_index = 0
-        combo_box.current(default_font_index)
+        self.combo_box.current(default_font_index)
 
 
 
@@ -230,9 +244,58 @@ class WriteFrame:
         cls.write_tab_text_google.insert("end", result.text)
         cls.write_tab_text_google.config(state='disabled')
         cls.write_tab_text_final.insert("end", result.text)
-        
-        # TODO: clear 'style tool' area
-    
+            
     @classmethod    
-    def reset_color_of_button_in_write_tab(color='#FFFF00'):
+    def reset_color_of_button_in_write_tab(cls, color='#FFFF00'):
         WriteFrame.button_color.configure(bg=color)
+
+    def get_complementary_color(self, color):
+        """
+        주어진 RGB 색상의 보색을 계산합니다.
+        """
+        r, g, b = color
+        return (255 - r, 255 - g, 255 - b)
+    
+    def hex_to_rgb(self, hex_color):
+        """Converts a hex color string to an RGB tuple."""
+        hex_color = hex_color.lstrip('#')
+        return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+    
+    def apply_text_to_image(self):
+        from oot.data.data_manager import DataManager
+        work_file = DataManager.get_work_file()
+        selected_idx = self.write_tab_text_list.radio_value.get()
+        
+        try:
+            start_pos, end_pos = work_file.get_rectangle_position_by_texts_index(selected_idx)
+            
+            apply_text = self.write_tab_text_final.get('1.0', 'end-1c')
+            estimated_font_size = int(self.combo_box2.get())  # Get the selected font size
+            font_style = self.combo_box.get()
+            font_path = os.path.join("./fonts", f"{font_style}.ttf")
+            
+            try:
+                font = ImageFont.truetype(font_path, estimated_font_size)
+            except IOError:
+                font = ImageFont.load_default()
+                print(f"Could not load font '{font_style}', using default font.")
+
+
+            out_file_path = DataManager.get_output_file()
+            image = Image.open(out_file_path)
+            draw = ImageDraw.Draw(image)
+            
+            # 배경색의 보색을 폰트 색상으로 설정
+            background_color_hex = self.button_color.cget('bg')
+            # Convert the hex color to RGB tuple
+            background_color = self.hex_to_rgb(background_color_hex)
+
+            draw.text(start_pos, apply_text, font=font, fill=background_color)
+            print(f"텍스트 '{apply_text}'가 이미지에 추가되었습니다.")
+
+            from oot.gui.middle_frame import MiddleFrame
+            MiddleFrame.out_canvas_worker.set_image(image)
+            MiddleFrame.redraw_canvas_images()
+            
+        except IndexError:
+            print(f"IndexError: Text index {selected_idx} out of range.")
