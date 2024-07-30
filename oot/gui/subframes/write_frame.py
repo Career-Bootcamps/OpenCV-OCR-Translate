@@ -8,6 +8,7 @@ from googletrans import Translator
 from httpcore import SyncHTTPProxy
 from PIL import Image, ImageDraw, ImageFont
 
+
     
 ENABLE_PROXY = False
 
@@ -109,7 +110,8 @@ class WriteFrame:
 
         write_tab_right_btn_apply = ttk.Button(c, text='적용', command=self.apply_text_to_image)
         write_tab_right_btn_apply.pack(side='left')
-        write_tab_right_btn_cancel = ttk.Button(c, text='복귀')
+        from oot.control.low_remove_control import clicked_revoke_image
+        write_tab_right_btn_cancel = ttk.Button(c, text='복귀', command=clicked_revoke_image)
         write_tab_right_btn_cancel.pack(side='left')
 
         # init font list
