@@ -204,8 +204,7 @@ pip install googletrans==4.0.0-rc1
   <summary>
    결과 시연
   </summary>
-  
-  https://github.com/user-attachments/assets/8a5e45e7-42ad-446e-a33d-f82babd70dc0
+  ![시연영상](https://youtu.be/zIppXkwfIOs)
   
 </details>
 
